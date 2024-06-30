@@ -20,7 +20,7 @@ class EnvState:
 
 @struct.dataclass
 class EnvParams(environment.EnvParams):
-    track_length: int
+    track_length: int = 10
 
 
 class Rollers(environment.Environment[EnvState, EnvParams]):

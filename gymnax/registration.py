@@ -113,6 +113,7 @@ def make(env_id: str, **env_kwargs):
 
 
 registered_envs = [
+    "Rollers",
     "CartPole-v1",
     "Pendulum-v1",
     "Acrobot-v1",
