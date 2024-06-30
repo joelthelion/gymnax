@@ -20,4 +20,5 @@ __all__ = [
     "MountainCar",
     "ContinuousMountainCar",
     "Acrobot",
+    "Rollers",
 ]

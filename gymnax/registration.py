@@ -12,6 +12,7 @@ from gymnax.environments.classic_control import cartpole
 from gymnax.environments.classic_control import continuous_mountain_car
 from gymnax.environments.classic_control import mountain_car
 from gymnax.environments.classic_control import pendulum
+from gymnax.environments.classic_control import rollers
 from gymnax.environments.minatar import asterix
 from gymnax.environments.minatar import breakout
 from gymnax.environments.minatar import freeway
@@ -55,6 +56,8 @@ def make(env_id: str, **env_kwargs):
         env = continuous_mountain_car.ContinuousMountainCar(**env_kwargs)
     elif env_id == "Acrobot-v1":
         env = acrobot.Acrobot(**env_kwargs)
+    elif env_id == "Rollers":
+        env = rollers.Rollers(**env_kwargs)
 
     # 2. DeepMind's bsuite environments
     elif env_id == "Catch-bsuite":
