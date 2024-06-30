@@ -11,6 +11,7 @@ from gymnax.visualize import vis_circle
 from gymnax.visualize import vis_gym
 from gymnax.visualize import vis_maze
 from gymnax.visualize import vis_minatar
+from gymnax.visualize import vis_rollers
 
 
 class Visualizer(object):
@@ -75,6 +76,10 @@ class Visualizer(object):
             self.im = vis_catch.init_catch(
                 self.ax, self.env, self.state_seq[0], self.env_params
             )
+        elif self.env.name == "Rollers":
+            self.im = vis_rollers.init_rollers(
+                self.ax, self.env, self.state_seq[0], self.env_params
+            )
         elif self.env.name in [
             "Asterix-MinAtar",
             "Breakout-MinAtar",
@@ -106,6 +111,8 @@ class Visualizer(object):
             self.im = vis_gym.update_gym(self.im, self.env, self.state_seq[frame])
         elif self.env.name == "Catch-bsuite":
             self.im = vis_catch.update_catch(self.im, self.env, self.state_seq[frame])
+        elif self.env.name == "Rollers":
+            self.im = vis_rollers.update_rollers(self.im, self.env, self.state_seq[frame])
         elif self.env.name in [
             "Asterix-MinAtar",
             "Breakout-MinAtar",
