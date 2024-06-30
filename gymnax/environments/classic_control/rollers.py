@@ -42,10 +42,11 @@ class Rollers(environment.Environment[EnvState, EnvParams]):
     ) -> Tuple[chex.Array, EnvState, jnp.ndarray, jnp.ndarray, Dict[Any, Any]]:
         """Performs step transitions in the environment."""
 
-        actions = jnp.array([action, jax.random.randint(key, (2,), 0, 4)])
-        state = lax.select(state.timer > 0, self.step_(state, actions), state)
-        done = self.state.timer == 0
-        reward = done & (self.state.positions[0] == max(self.state.positions))
+        actions = jnp.hstack([action, jax.random.randint(key, (2,), 0, 4)])
+        # state = lax.select(state.timer > 0, self.step_(state, actions), state)
+        state = lax.cond(state.timer > 0, lambda state:self.step_(state, actions), lambda s:s, state)
+        done = state.timer == 0
+        reward = done & (state.positions[0] == jnp.max(state.positions))
         return (
                 lax.stop_gradient(self.get_obs(state)),
                 lax.stop_gradient(state),
@@ -84,13 +85,10 @@ class Rollers(environment.Environment[EnvState, EnvParams]):
         self, key: chex.PRNGKey, params: EnvParams
     ) -> Tuple[chex.Array, EnvState]:
         """Performs resetting of environment."""
-        init_state = jax.random.uniform(key, minval=-0.05, maxval=0.05, shape=(4,))
         state = EnvState(
-            x=init_state[0],
-            x_dot=init_state[1],
-            theta=init_state[2],
-            theta_dot=init_state[3],
-            time=0,
+            positions=jnp.array([0, 0, 0]),
+            risks=jnp.array([0, 0, 0]),
+            timer=15,
         )
         return self.get_obs(state), state
 
