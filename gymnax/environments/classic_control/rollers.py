@@ -62,20 +62,23 @@ class Rollers(environment.Environment[EnvState, EnvParams]):
             action = actions[player]
             pos = positions[player]
             risk = risks[player]
-            pos,risk = lax.switch(
+            new_pos,new_risk = lax.switch(
                 action,
                 [lambda pos,risk:(pos+1, risk-1),
                 lambda pos,risk:(pos+2, risk),
                 lambda pos,risk:(pos+2, risk+1),
                 lambda pos,risk:(pos+3, risk+2)],
             pos, risk)
-            positions = positions.at[player].set(pos)
-            risks = risks.at[player].set(risk)
+            new_risk = lax.select(risk < 0, risk+1, new_risk)
+            new_pos = lax.select(risk < 0, pos, new_pos) # stunned
+            positions = positions.at[player].set(new_pos)
+            risks = risks.at[player].set(new_risk)
         for i in range(3):
             # FIXME: handle loops
-            clash = risks[i] >= 0 & ((positions[(i+1)%3] == positions[i])
+            clash = (risks[i] >= 0) & ((positions[(i+1)%3] == positions[i])
                                             | (positions[(i+2)%3] == positions[i]))
-            risks = risks.at[i].set(lax.select(clash==1, risks[i]+2, risks[i]))
+            # jax.debug.print("{} {} {} {} {} {} {}", i, risks[i], clash, positions, positions[i], positions[(i+1)%3], positions[(i+2)%3])
+            risks = risks.at[i].set(lax.select(clash, risks[i]+2, risks[i]))
             risks = risks.at[i].set(lax.select(risks[i] >= 5, -2, risks[i]))
         return state.replace(positions=positions,
                     risks=risks,
