@@ -69,6 +69,7 @@ class Rollers(environment.Environment[EnvState, EnvParams]):
                 lambda pos,risk:(pos+2, risk+1),
                 lambda pos,risk:(pos+3, risk+2)],
             pos, risk)
+            new_risk = jnp.maximum(0, new_risk)
             new_risk = lax.select(risk < 0, risk+1, new_risk)
             new_pos = lax.select(risk < 0, pos, new_pos) # stunned
             positions = positions.at[player].set(new_pos)
